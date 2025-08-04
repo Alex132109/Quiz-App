@@ -1,9 +1,9 @@
 package com.ashutosh.QuizzApp.Controller;
 
-import com.ashutosh.QuizzApp.Question;
+import com.ashutosh.QuizzApp.model.Question;
 import com.ashutosh.QuizzApp.Service.QuestionService;
-import com.ashutosh.QuizzApp.dao.QuestionDao;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,15 +16,15 @@ public class QuestionController {
     QuestionService questionService;
 
     @GetMapping("allQuestion")
-    public List<Question> getAllQuestion(){
+    public ResponseEntity<List<Question>> getAllQuestion(){
         return questionService.getAllQuestion();
     }
     @GetMapping("category/{category}")
-    public List<Question> getQuestionByCategory(@PathVariable String category){
+    public ResponseEntity<List<Question>> getQuestionByCategory(@PathVariable String category){
         return questionService.getQuestionByCategory(category);
     }
     @PostMapping("/add")
-    public String addQuestion(@RequestBody Question question){
+    public ResponseEntity<String> addQuestion(@RequestBody Question question){
         return questionService.addQuestion(question);
     }
 }
