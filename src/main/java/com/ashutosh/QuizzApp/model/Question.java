@@ -1,4 +1,4 @@
-package com.ashutosh.QuizzApp;
+package com.ashutosh.QuizzApp.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
@@ -23,6 +23,6 @@ public class Question {
 
     private String difficultyLevel;
 
-    @Column(name = "category") // ✅ This is correctly placed
+    @Column(name = "category")
     private String category;
 }
