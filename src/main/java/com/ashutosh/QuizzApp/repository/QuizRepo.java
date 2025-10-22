@@ -1,9 +1,9 @@
-package com.ashutosh.QuizzApp.dao;
+package com.ashutosh.QuizzApp.repository;
 
 import com.ashutosh.QuizzApp.model.Quiz;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 
-public interface QuizDao extends JpaRepository<Quiz, Integer> {
+public interface QuizRepo extends JpaRepository<Quiz, Integer> {
 
 }

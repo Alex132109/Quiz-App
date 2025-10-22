@@ -1,8 +1,7 @@
 package com.ashutosh.QuizzApp.Service;
 
-import com.ashutosh.QuizzApp.QuizzAppApplication;
-import com.ashutosh.QuizzApp.dao.QuestionDao;
-import com.ashutosh.QuizzApp.dao.QuizDao;
+import com.ashutosh.QuizzApp.repository.QuestionRepo;
+import com.ashutosh.QuizzApp.repository.QuizRepo;
 import com.ashutosh.QuizzApp.model.Question;
 import com.ashutosh.QuizzApp.model.QuestionWrapper;
 import com.ashutosh.QuizzApp.model.Quiz;
@@ -19,33 +18,30 @@ import java.util.Optional;
 @Service
 public class QuizService {
     @Autowired
-    QuestionDao questionDao;
+    QuestionRepo questionRepo;
     @Autowired
-    QuizDao quizDao;
+    QuizRepo quizRepo;
 
-    public ResponseEntity<String> createQuiz(String category, int numQ, String title) {
-        try {
-            List<Question> questions = questionDao.findRandomQuestionByCategory(category, numQ);
+    public int createQuiz(String category, int numQ, String title) {
+        List<Question> questions = questionRepo.findRandomQuestionByCategory(category, numQ);
 
-            Quiz quiz = new Quiz();
-            quiz.setTitle(title);
-            quiz.setQuestions(questions);
-            quizDao.save(quiz);
+        Quiz quiz = new Quiz();
+        quiz.setTitle(title);
+        quiz.setQuestions(questions);
 
-            return new ResponseEntity<>("Success", HttpStatus.CREATED);
-        } catch (Exception e) {
-            e.printStackTrace(); // Logs to console
-            return new ResponseEntity<>("Failed: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        Quiz savedQuiz = quizRepo.save(quiz);
+
+        return savedQuiz.getId();  // just return the quizId
     }
 
+
     public ResponseEntity<List<QuestionWrapper>> getQuizQuestions(int id) {
-        Optional<Quiz> quiz = quizDao.findById(id);
+        Optional<Quiz> quiz = quizRepo.findById(id);
         List<Question> questionsFromDB = quiz.get().getQuestions();
         List<QuestionWrapper> questionForUser = new ArrayList<>();
 
         for (Question q: questionsFromDB){
-            QuestionWrapper qw = new QuestionWrapper(q.getId(), q.getQuestionTitle(), q.getOption1(), q.getOption2(), q.getOption3(), q.getOption4());
+            QuestionWrapper qw = new QuestionWrapper(q.getId(), q.getQuestionTitle(), q.getOption1(), q.getOption2(), q.getOption3(), q.getOption4(), q.getRightAnswer());
             questionForUser.add(qw);
         }
         return new ResponseEntity<>(questionForUser, HttpStatus.OK);
@@ -53,7 +49,7 @@ public class QuizService {
 
     public ResponseEntity<Integer> calculateresult(int id, List<Response> responses) {
 
-        Quiz quiz = quizDao.findById(id).get();
+        Quiz quiz = quizRepo.findById(id).get();
         List<Question> questions = quiz.getQuestions();
         int i = 0;
         int right = 0;

@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("question")
 public class QuestionController {
@@ -15,16 +15,21 @@ public class QuestionController {
     @Autowired
     QuestionService questionService;
 
-    @GetMapping("allQuestion")
+    @GetMapping("/allQuestion")
     public ResponseEntity<List<Question>> getAllQuestion(){
-        return questionService.getAllQuestion();
+
+        return questionService.getAllQuestion(); // check
     }
-    @GetMapping("category/{category}")
-    public ResponseEntity<List<Question>> getQuestionByCategory(@PathVariable String category){
+    @GetMapping("/category/{category}")
+    public ResponseEntity<List<Question>> getQuestionByCategory(@PathVariable("category") String category){
         return questionService.getQuestionByCategory(category);
     }
     @PostMapping("/add")
     public ResponseEntity<String> addQuestion(@RequestBody Question question){
         return questionService.addQuestion(question);
+    }
+    @GetMapping("/search/{category}")
+    public List<Question> searchQuestions(@PathVariable String category) {
+        return questionService.getQuestionsByCategory(category);
     }
 }
